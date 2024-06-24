@@ -1,0 +1,6 @@
+@RNGRecipe_HostAddress = http://localhost:5269
+
+GET {{RNGRecipe_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
