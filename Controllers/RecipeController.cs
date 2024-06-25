@@ -20,16 +20,16 @@ namespace RNGRecipe.Controllers
 
         private static readonly string[] Instructions = new[]
         {
-            "Mix all ingredients together",
-            "Bake at 350 degrees for 30 minutes",
-            "Fry in a pan for 10 minutes",
-            "Boil for 5 minutes",
-            "Microwave for 2 minutes",
-            "Serve cold",
-            "Serve hot",
-            "Serve with a side of fries",
-            "Serve with a side of salad",
-            "Serve with a side of rice"
+            "Mix %s with %s for about an hour",
+            "Bake %s together with %s at 350 degrees for 99 minutes",
+            "Fry %s in %s for 10 minutes",
+            "Boil %s in %s for 5 minutes",
+            "Microwave %s and %s for 1 minute",
+            "Grill %s with %s for 30 minutes",
+            "Bake %s with %s for 20 minutes",
+            "Fry %s and %s for 15 minutes",
+            "Boil %s and %s for 10 minutes",
+            "Microwave %s and %s for 5 minutes"
         };
 
         [HttpGet]
@@ -39,18 +39,55 @@ namespace RNGRecipe.Controllers
 
             var title = Titles[random.Next(Titles.Length)];
             var ingredients = new List<string>();
-            for (int i = 0; i <= 5; i++)
+            var instructions = new List<string>();
+            var insPart = "Instrcutions: \n\n";
+            string ingPart1 = "";
+            string ingPart2 = "";
+            instructions.Add(insPart);
+            string ins = "";
+            var insArr = new List<string>();
+            for (int i = 0; i < 5; i++)
             {
-                   ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
+                foreach (string ingredient in ingredients)
+                {
+                    ingPart1 = Ingredients[random.Next(Ingredients.Length)];
+                    ingPart2 = Ingredients[random.Next(Ingredients.Length)];
+                    if (ingPart1 != ingredient && ingPart2 != ingPart1)
+                    {
+                        ingredients.Add(ingPart1);
+                        ingredients.Add(ingPart2);
+                    }
+                    else if (ingPart1 != ingredient)
+                    {
+                        ingredients.Add(ingPart1);
+                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
+                    }
+                    else if (ingPart2 != ingPart1)
+                    {
+                        ingredients.Add(ingPart2);
+                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
+                    }
+                    else {
+                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
+                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
+                    }
+                }
+                foreach (string instruction in insArr)
+                {
+                    insPart = Instructions[random.Next(Instructions.Length)];
+                    if (insPart != instruction)
+                    {
+                        insArr.Add(insPart);
+                    }
+                }
+                //ins = string.Format(insArr[i], ingredients[i], ingredients[i + 1]); ERROR 
+                instructions.Add(ins);
             }
-
-            var instructuions = Instructions[random.Next(Instructions.Length)];
-
             var recipe = new Recipe
             {
                 Title = title,
                 Ingredients = ingredients,
-                Instructions = instructuions
+                Instructions = instructions
             };
 
             return Ok(recipe);
