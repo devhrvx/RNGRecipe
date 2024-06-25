@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RNGRecipe.Controllers
 {
@@ -70,20 +72,24 @@ namespace RNGRecipe.Controllers
             "Mix {0} with {1} and serve"
         };
 
+        private Random random = new Random();
+
         [HttpGet]
         public ActionResult<Recipe> GetRandomRecipe()
-        {
-            var random = new Random();
-
+        {   
+            Random random = new Random();
             var title = Titles[random.Next(Titles.Length)];
             var ingredients = new HashSet<string>();
-            var instructions = new HashSet<string>();
-            for (int i = 0; i < 5; i++)
+            var instructions = new List<string>();
+            
+
+            // Select 5 unique ingredients
+            while (ingredients.Count < 5)
             {
-                AddRandomIngredient(ingredients, random);
                 AddRandomIngredient(ingredients, random);
             }
 
+            // Generate 5 unique instructions
             while (instructions.Count < 5)
             {
                 AddRandomInstruction(instructions, ingredients, random);
@@ -92,13 +98,12 @@ namespace RNGRecipe.Controllers
             var recipe = new Recipe
             {
                 Title = title,
-                Ingredients = ingredients,
+                Ingredients = ingredients.ToList(),
                 Instructions = instructions
             };
 
             return Ok(recipe);
         }
-
 
         private void AddRandomIngredient(HashSet<string> ingredients, Random random)
         {
@@ -112,36 +117,33 @@ namespace RNGRecipe.Controllers
             }
         }
 
-        private void AddRandomInstruction(HashSet<string> instructions, HashSet<string> ingredients, Random random)
+        private void AddRandomInstruction(List<string> instructions, HashSet<string> ingredients, Random random)
         {
-            var ingredientsListed = ingredients.ToList();
-            string ing1, ing2;
-            var attemps = 0;
-            const int maxAttempts = 100;
+            string instruction = Instructions[random.Next(Instructions.Length)];
+            var listIng = ingredients.ToList();
+            string[] ings = new string[listIng.Count];
+            int i = 0;
 
-            do
+            foreach (string ing in listIng)
             {
-                ing1 = ingredientsListed[random.Next(ingredientsListed.Count)];
-                ing2 = ingredientsListed[random.Next(ingredientsListed.Count)];
-            } while ((ing1 == ing2 || InstrunctionAlreadyExists(instructions, ing1, ing2)) && attemps++ < maxAttempts);
-
-            var instructionsTemplate = Instructions[random.Next(Instructions.Length)];
-            var formattedInstructions = string.Format(instructionsTemplate, ing1, ing2);
-
-            instructions.Add(formattedInstructions);
-        }
-
-        private bool InstrunctionAlreadyExists(HashSet<string> instructions, string ing1, string ing2)
-        {
-            foreach (var instruction in instructions)
-            {
-                if (instruction.Contains(ing1) && instruction.Contains(ing2))
-                {
-                    return true;
-                }
-
+                ings[i] = ing;
+                i++;
             }
-            return false;
+
+            string formattedInstruction = "";
+
+            for (int j = 0; j < ings.Length - 1; j += 2)
+            {
+                formattedInstruction = string.Format(instruction, ings[j], ings[j + 1]);
+                Console.WriteLine(formattedInstruction);
+            }
+
+                if (!instructions.Contains(formattedInstruction))
+                {
+                    instructions.Add(formattedInstruction);
+                }
+            }
+            
         }
-    }
+    
 }
