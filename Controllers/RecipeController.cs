@@ -114,17 +114,34 @@ namespace RNGRecipe.Controllers
 
         private void AddRandomInstruction(HashSet<string> instructions, HashSet<string> ingredients, Random random)
         {
-            var ingredientsList = new List<string>(ingredients);
-            while (true)
+            var ingredientsListed = ingredients.ToList();
+            string ing1, ing2;
+            var attemps = 0;
+            const int maxAttempts = 100;
+
+            do
             {
-                var instructionTemplate = Instructions[random.Next(Instructions.Length)];
-                var formattedInstructions = string.Format(instructionTemplate, ingredientsList[random.Next(ingredientsList.Count)], ingredientsList[random.Next(ingredientsList.Count)]);
-                if (instructions.Add(formattedInstructions))
-                {
-                    break;
-                }
-            }
+                ing1 = ingredientsListed[random.Next(ingredientsListed.Count)];
+                ing2 = ingredientsListed[random.Next(ingredientsListed.Count)];
+            } while ((ing1 == ing2 || InstrunctionAlreadyExists(instructions, ing1, ing2)) && attemps++ < maxAttempts);
+
+            var instructionsTemplate = Instructions[random.Next(Instructions.Length)];
+            var formattedInstructions = string.Format(instructionsTemplate, ing1, ing2);
+
+            instructions.Add(formattedInstructions);
         }
 
+        private bool InstrunctionAlreadyExists(HashSet<string> instructions, string ing1, string ing2)
+        {
+            foreach (var instruction in instructions)
+            {
+                if (instruction.Contains(ing1) && instruction.Contains(ing2))
+                {
+                    return true;
+                }
+
+            }
+            return false;
+        }
     }
 }
