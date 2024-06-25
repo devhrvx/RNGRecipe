@@ -20,16 +20,16 @@ namespace RNGRecipe.Controllers
 
         private static readonly string[] Instructions = new[]
         {
-            "Mix %s with %s for about an hour",
-            "Bake %s together with %s at 350 degrees for 99 minutes",
-            "Fry %s in %s for 10 minutes",
-            "Boil %s in %s for 5 minutes",
-            "Microwave %s and %s for 1 minute",
-            "Grill %s with %s for 30 minutes",
-            "Bake %s with %s for 20 minutes",
-            "Fry %s and %s for 15 minutes",
-            "Boil %s and %s for 10 minutes",
-            "Microwave %s and %s for 5 minutes"
+            "Mix {0} with {1} for about an hour",
+            "Bake {0} together with {1} at 350 degrees for 99 minutes",
+            "Fry {0} in {1} for 10 minutes",
+            "Boil {0} in {1} for 5 minutes",
+            "Microwave {0} and {1} for 1 minute",
+            "Grill {0} with {1} for 30 minutes",
+            "Bake {0} with {1} for 20 minutes",
+            "Fry {0} and {1} for 15 minutes",
+            "Boil {0} and {1} for 10 minutes",
+            "Microwave {0} and {1} for 5 minutes"
         };
 
         [HttpGet]
@@ -38,51 +38,19 @@ namespace RNGRecipe.Controllers
             var random = new Random();
 
             var title = Titles[random.Next(Titles.Length)];
-            var ingredients = new List<string>();
-            var instructions = new List<string>();
-            var insPart = "Instrcutions: \n\n";
-            string ingPart1 = "";
-            string ingPart2 = "";
-            instructions.Add(insPart);
-            string ins = "";
-            var insArr = new List<string>();
+            var ingredients = new HashSet<string>();
+            var instructions = new HashSet<string>();
             for (int i = 0; i < 5; i++)
             {
-                foreach (string ingredient in ingredients)
-                {
-                    ingPart1 = Ingredients[random.Next(Ingredients.Length)];
-                    ingPart2 = Ingredients[random.Next(Ingredients.Length)];
-                    if (ingPart1 != ingredient && ingPart2 != ingPart1)
-                    {
-                        ingredients.Add(ingPart1);
-                        ingredients.Add(ingPart2);
-                    }
-                    else if (ingPart1 != ingredient)
-                    {
-                        ingredients.Add(ingPart1);
-                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
-                    }
-                    else if (ingPart2 != ingPart1)
-                    {
-                        ingredients.Add(ingPart2);
-                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
-                    }
-                    else {
-                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
-                        ingredients.Add(Ingredients[random.Next(Ingredients.Length)]);
-                    }
-                }
-                foreach (string instruction in insArr)
-                {
-                    insPart = Instructions[random.Next(Instructions.Length)];
-                    if (insPart != instruction)
-                    {
-                        insArr.Add(insPart);
-                    }
-                }
-                //ins = string.Format(insArr[i], ingredients[i], ingredients[i + 1]); ERROR 
-                instructions.Add(ins);
+                AddRandomIngredient(ingredients, random);
+                AddRandomIngredient(ingredients, random);
             }
+
+            while (instructions.Count < 5)
+            {
+                AddRandomInstruction(instructions, ingredients, random);
+            }
+
             var recipe = new Recipe
             {
                 Title = title,
@@ -92,5 +60,33 @@ namespace RNGRecipe.Controllers
 
             return Ok(recipe);
         }
+
+
+        private void AddRandomIngredient(HashSet<string> ingredients, Random random)
+        {
+            while (true)
+            {
+                var ingredient = Ingredients[random.Next(Ingredients.Length)];
+                if (ingredients.Add(ingredient))
+                {
+                    break;
+                }
+            }
+        }
+
+        private void AddRandomInstruction(HashSet<string> instructions, HashSet<string> ingredients, Random random)
+        {
+            var ingredientsList = new List<string>(ingredients);
+            while (true)
+            {
+                var instructionTemplate = Instructions[random.Next(Instructions.Length)];
+                var formattedInstructions = string.Format(instructionTemplate, ingredientsList[random.Next(ingredientsList.Count)], ingredientsList[random.Next(ingredientsList.Count)]);
+                if (instructions.Add(formattedInstructions))
+                {
+                    break;
+                }
+            }
+        }
+
     }
 }
