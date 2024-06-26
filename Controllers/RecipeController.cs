@@ -83,17 +83,13 @@ namespace RNGRecipe.Controllers
             var instructions = new List<string>();
             
 
-            // Select 5 unique ingredients
-            while (ingredients.Count < 5)
+            //Adds 10 ingredients because it if it is 5 then instructions will be blank!!!
+            while (ingredients.Count < 10)
             {
                 AddRandomIngredient(ingredients, random);
             }
 
-            // Generate 5 unique instructions
-            while (instructions.Count < 5)
-            {
-                AddRandomInstruction(instructions, ingredients, random);
-            }
+            AddFiveRandomInstructions(ingredients, instructions, random);
 
             var recipe = new Recipe
             {
@@ -117,33 +113,29 @@ namespace RNGRecipe.Controllers
             }
         }
 
-        private void AddRandomInstruction(List<string> instructions, HashSet<string> ingredients, Random random)
+        private List<string> AddFiveRandomInstructions(HashSet<string> ingredients, List<string> instructions, Random random)
         {
-            string instruction = Instructions[random.Next(Instructions.Length)];
-            var listIng = ingredients.ToList();
-            string[] ings = new string[listIng.Count];
+            List<string> listIng = ingredients.ToList();
+            string[] ings = new string[10];
             int i = 0;
-
             foreach (string ing in listIng)
             {
                 ings[i] = ing;
                 i++;
             }
-
-            string formattedInstruction = "";
-
-            for (int j = 0; j < ings.Length - 1; j += 2)
+            while (instructions.Count < 5)
             {
-                formattedInstruction = string.Format(instruction, ings[j], ings[j + 1]);
-                Console.WriteLine(formattedInstruction);
+                for(int j = 0; j < 10; j+=2)
+                {
+                    var instruction = string.Format(Instructions[random.Next(Instructions.Length)], ings[j], ings[j+1]);
+                    instructions.Add(instruction);
+                }
+
             }
 
-                if (!instructions.Contains(formattedInstruction))
-                {
-                    instructions.Add(formattedInstruction);
-                }
-            }
-            
+            return instructions;
         }
+            
+    }
     
 }
