@@ -52,7 +52,8 @@ namespace RNGRecipe.Controllers
             "1 cup of syrup",
             "1 cup of jam",
             "1 cup of jelly",
-            "1 cup of peanut butter"
+            "1 cup of peanut butter",
+            "1 pinch of audacity"
         };
 
         private static readonly string[] Instructions = new[]
