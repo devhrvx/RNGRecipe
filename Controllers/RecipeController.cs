@@ -123,6 +123,8 @@ namespace RNGRecipe.Controllers
                 ings[i] = ing;
                 i++;
             }
+            string[] insStarters = {"Here's the recipe: ", "Hey there! First you need to: ", "Uhhmm first...", "HAHAHAHAH: "};
+            instructions.Add(insStarters[random.Next(insStarters.Length)]);
             while (instructions.Count < 5)
             {
                 for(int j = 0; j < 10; j+=2)
@@ -132,7 +134,7 @@ namespace RNGRecipe.Controllers
                 }
 
             }
-
+            instructions.Add("Serve it with love... <3");
             return instructions;
         }
             
