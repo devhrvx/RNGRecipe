@@ -14,7 +14,7 @@ namespace RNGRecipe
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>(); // This line specifies to use your Startup class
+                    webBuilder.UseStartup<Startup>();
                 });
     }
 }

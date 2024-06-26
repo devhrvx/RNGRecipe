@@ -8,26 +8,21 @@ namespace RNGRecipe
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Register the Swagger generator
+            services.AddControllers();
+            // Add authorization services
+            services.AddAuthorization();
+
+            // Register the Swagger generator, defining one or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RNG (Random Nonsense Generator): Recipe", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
-
-            services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -41,13 +36,29 @@ namespace RNGRecipe
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles(); // Make sure static files middleware is enabled
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
-            // Configure default file to use your custom index.html
-            app.UseDefaultFiles(new DefaultFilesOptions
+            app.Use(async (context, next) =>
             {
-                DefaultFileNames = new List<string> { "index.html" }
+                if (context.Request.Path.Value == "/")
+                {
+                    // Redirect to the index.html
+                    context.Response.Redirect("/index.html");
+                    return;
+                }
+
+                await next();
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                // Don't set the routePrefix to an empty string
+                c.RoutePrefix = "swagger";
+            });
+
 
             app.UseRouting();
 
