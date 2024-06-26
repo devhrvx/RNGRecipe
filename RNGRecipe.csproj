@@ -7,17 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="CustomContent\index.html" />
-    <None Remove="CustomContent\style.css" />
+    <Compile Remove="CustomContent\**" />
+    <Compile Remove="NewFolder\**" />
+    <Content Remove="CustomContent\**" />
+    <Content Remove="NewFolder\**" />
+    <EmbeddedResource Remove="CustomContent\**" />
+    <EmbeddedResource Remove="NewFolder\**" />
+    <None Remove="CustomContent\**" />
+    <None Remove="NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="CustomContent\index.html" />
-    <Resource Include="CustomContent\style.css" />
   </ItemGroup>
 
 </Project>

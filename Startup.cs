@@ -33,23 +33,21 @@ namespace RNGRecipe
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                // Enable middleware to serve Swagger-generated JSON endpoint
-                app.UseSwagger();
-                // Enable middleware to serve Swagger-ui (HTML, JS, CSS, etc.)
-                app.UseSwaggerUI(c =>
-                {
-                    
-                    c.InjectJavascript("/CustomContent/script.js");
-                    c.InjectStylesheet("/CustomContent/style.css");
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1");
-                });
             }
             else
             {
-                // For non-development environments, configure error handling, logging, etc.
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles(); // Make sure static files middleware is enabled
+
+            // Configure default file to use your custom index.html
+            app.UseDefaultFiles(new DefaultFilesOptions
+            {
+                DefaultFileNames = new List<string> { "index.html" }
+            });
 
             app.UseRouting();
 
@@ -59,6 +57,8 @@ namespace RNGRecipe
             {
                 endpoints.MapControllers();
             });
+
+            // Optionally, disable Swagger if you don't want it to be accessible
         }
     }
 }
